@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block titulo %}Penalty - {{ ambiente.nome }} - Editar Ambiente{% endblock titulo %}
+
+{% block conteudo %}
+
+
+<div class="container">
+	<div class="col-lg-10 col-lg-offset-1">
+		<div class="card">
+		  <div class="card-body">
+		<ol class="breadcrumb">
+		  <li><a href="/">Home</a></li>
+		  <li><a href="{% url 'ambiente:ambiente' ambiente.pk %}">{{ ambiente.nome }}</a></li>
+		  <li class="active">Editar ambiente</li>
+		</ol>
+		   <h4>{{ ambiente.nome }} - Editar ambiente</h4>
+		   <hr>
+		    <form action="{% url 'ambiente:editar' ambiente.pk %}" method="post">
+		      {% csrf_token %}
+		      {% for field in form %}
+		      	<div class="form-group">
+		      	{{ field.errors }}
+    			{{ field.label_tag }} {{ field }}
+    			</div>
+		      {% endfor %}
+			  <button type="submit" class="btn btn-primary btn-block">Salvar alterações</button>
+			</form>
+		  </div>
+		</div>
+	</div>		
+</div>
+
+{% endblock conteudo %}

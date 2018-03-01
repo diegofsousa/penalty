@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+{% load aux_tags %}
+{% block titulo %}Penalty - {{ ambiente.nome }} - Eventos Passados ({{ participante.first_name }}){% endblock titulo %}
+
+{% block conteudo %}
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-sm-3">
+		    <nav class="nav-sidebar">
+		        <ul class="nav">
+		            <li><a href="{% url 'ambiente:ambiente' ambiente.pk %}">Geral</a></li>
+		            <li class="nav-divider"></li>
+		            <li><a href="{% url 'ambiente:proximos_eventos' ambiente.pk %}">Próximos eventos</a></li>
+		            <li class="active"><a href="{% url 'ambiente:eventos_passados' ambiente.pk %}">Eventos passados</a></li>
+		            <li><a href="{% url 'ambiente:eventos_multados' ambiente.pk %}">Multas</a></li>
+		            <li class="nav-divider"></li>
+		            <li><a href="{% url 'ambiente:eventos' ambiente.pk %}">Gerenciar eventos</a></li>
+		            <li><a href="{% url 'ambiente:participantes' ambiente.pk %}">Gerenciar participantes</a></li>
+		            <li class="nav-divider"></li>
+		            <li><a href="{% url 'ambiente:estatisticas' ambiente.pk %}">Estatísticas</a></li>
+		            <li><a href="{% url 'ambiente:sobre' ambiente.pk %}">Sobre o ambiente</a></li>
+		        </ul>
+		    </nav>
+		</div>
+	
+	<div class="col-sm-9">
+		<ol class="breadcrumb">
+		  <li><a href="#">Home</a></li>
+		  <li><a href="{% url 'ambiente:ambiente' ambiente.pk %}">{{ ambiente.nome }}</a></li>
+		  <li><a href="{% url 'ambiente:eventos_passados' ambiente.pk %}">Eventos Passados</a></li>
+		  <li class="active">Filtrado para {{ participante.first_name }}</li>
+		</ol>
+		<h3>{{ ambiente.nome }} - Eventos passados de {{ participante.first_name }}:</h3>
+		<hr>
+		<div class="panel panel-default">
+		  <div class="panel-body">
+		  <p>Aqui estão os eventos passados deste ambiente para {{ participante.first_name }} - <a href="{% url 'ambiente:eventos' ambiente.pk %}">Gerenciar eventos</a> - <a href="{% url 'ambiente:eventos_passados' ambiente.pk %}">Todos os eventos passados</a></p></p>
+		  <hr>
+		  <div class="row">
+		  	
+		  
+		  {% for evento in eventos %}
+		  <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6">
+		  	<div class="panel panel-default">
+		  	  {% if evento.intervalo == "D" %}
+		  	  	<div class="panel-body dias">
+		  	  {% elif evento.intervalo == "S" %}
+		  	  	<div class="panel-body semanas">
+		  	  {% else %}
+		  	    <div class="panel-body meses">
+		  	  {% endif %}
+			    <h4><a href="{% url 'ambiente:tarefa' ambiente.pk evento.pk %}" class="titulopindex">{{ evento.nome }}</a><span class="pCinza"> - {{ evento.dia_evento }}</span></h4>
+			    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+			    	<small class="pCinzaUser">
+				    	{{ evento.descricao }}<br>
+				    	Se repete de {{ evento.quantidade_intervalos_repeticao }} em {{ evento.quantidade_intervalos_repeticao }} {{ evento.intervalo|typedata }}<br>
+				    	Valor multa: R$ {{ evento.valor_multa }}<br>
+			    	</small>
+			    </div>
+			    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+			    	<small class="pCinzaUser">
+			    	<ul>
+			    		{% if evento.action_rules == 1 %}
+			    			<li style="color: #008B45;">Em validação...</li>
+			    			{% if evento.multa_corrente > 0 %}
+			    				<li style="color: #008B45;">Multa paga: R$ {{ evento.multa_corrente }}</li>		    				
+		    				{% endif %}
+			    		{% elif evento.action_rules == 2 %}
+			    			<li>Tarefa validada.</li>
+			    			{% if evento.multa_corrente > 0 %}
+			    				<li>Multa paga: R$ {{ evento.multa_corrente }}</li>		    				
+		    				{% endif %}
+		    			{% elif evento.action_rules == 3 %}
+			    			<li>Evento para hoje!</li>
+			    		{% elif evento.action_rules == 4 %}
+			    			<li style="color: #FF6347;">Tarefa não feita;</li>
+			    			{% if evento.multa_corrente > 0 %}
+			    				<li style="color: #FF6347;">Multa corrente: R$ {{ evento.multa_corrente }}</li>	    				
+		    				{% endif %}
+			    		{% endif %}
+			    		{% if evento|coment %}
+			    			<li><a href="{% url 'ambiente:tarefa' ambiente.pk evento.pk %}">{{ evento|coment }} comentario(s) nesta tarefa.</a></li>
+				    	{% endif %}
+			    	</ul>
+			    </small>
+			    </div>
+			    
+			  </div>
+			</div>
+		  </div>
+
+		  {% empty %}
+		  	<div class="container">
+		  		<p>Não há nenhuma tarefa futura neste ambiente.</p>
+		  	</div>
+		  {% endfor %}
+		  
+		  </div>
+		  <div class="col-sm-6 col-sm-offset-3">
+		  <nav aria-label="Page navigation">
+			  <ul class="pager">
+			    {% if eventos.has_previous %}
+			    	<li class="previous"><a href="?page={{ eventos.previous_page_number }}"><span aria-hidden="true">&larr;</span> Página anterior</a></li>
+		        {% endif %}
+			    Página {{ eventos.number }} de {{ eventos.paginator.num_pages }}.
+			    {% if eventos.has_next %}
+			    	<li class="next"><a href="?page={{ eventos.next_page_number }}">Próxima página <span aria-hidden="true">&rarr;</span></a></li>
+		        {% endif %}
+			  </ul>
+			</nav>
+			</div>
+		  </div>
+		</div>	
+	</div>
+</div>
+</div>
+{% endblock conteudo %}

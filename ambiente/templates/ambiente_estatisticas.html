@@ -1,0 +1,204 @@
+{% extends "base.html" %}
+{% load aux_tags %}
+{% block titulo %}Penalty - {{ ambiente.nome }} - Estatísticas {% endblock titulo %}
+
+{% block conteudo %}
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-sm-3">
+		    <nav class="nav-sidebar">
+		        <ul class="nav">
+		            <li><a href="{% url 'ambiente:ambiente' ambiente.pk %}">Geral</a></li>
+		            <li class="nav-divider"></li>
+		            <li><a href="{% url 'ambiente:proximos_eventos' ambiente.pk %}">Próximos eventos</a></li>
+		            <li><a href="{% url 'ambiente:eventos_passados' ambiente.pk %}">Eventos passados</a></li>
+		            <li><a href="{% url 'ambiente:eventos_multados' ambiente.pk %}">Multas</a></li>
+		            <li class="nav-divider"></li>
+		            <li><a href="{% url 'ambiente:eventos' ambiente.pk %}">Gerenciar eventos</a></li>
+		            <li><a href="{% url 'ambiente:participantes' ambiente.pk %}">Gerenciar participantes</a></li>
+		            <li class="nav-divider"></li>
+		            <li class="active"><a href="javascript:;">Estatísticas</a></li>
+                <li><a href="{% url 'ambiente:sobre' ambiente.pk %}">Sobre o ambiente</a></li>
+		        </ul>
+		    </nav>
+		</div>
+	
+	<div class="col-sm-9">
+        <ol class="breadcrumb">
+            <li><a href="#">Home</a></li>
+            <li><a href="{% url 'ambiente:ambiente' ambiente.pk %}">{{ ambiente.nome }}</a></li>
+            <li class="active">Estatísticas</li>
+        </ol>
+	<h3>{{ ambiente.nome }} - Estatísticas do ambiente:</h3>
+	<hr>
+		<div class="col-sm-12">
+			<div class="panel panel-default">
+		        <div class="panel-body">
+			          <p align="center">Quantidade de Tarefas Totais e Tarefas Concluídas no Ambiente:</p>
+			          <br>
+			          <div id="chart1"></div>  
+			          <p align="center">A eficiência de um participante se mede pela proximidade das barras azul e laranja.</p>
+				</div>
+			</div>
+		</div>
+		<div class="col-sm-12">
+			<div class="panel panel-default">
+		        <div class="panel-body">
+			          <p align="center">Taxa de Eficência Mensal:</p>
+			          <br>
+			          <div id="chart2"></div>  
+			          <p align="center">Taxa mensal da eficiência de cada participante para os últimos 12 meses. O cálculo da porcentagem segue a seguinte fórmula: \[ (n/N) * 100 \]</p>
+			          
+				</div>
+			</div>
+		</div>
+		<div class="col-sm-6">
+			<div class="panel panel-default">
+		        <div class="panel-body">
+			          <p align="center">Taxa de Contribuições de Cada Participante no Ambiente:</p>
+			          <br>
+			          <div id="chart3"></div>  
+				</div>
+			</div>
+		</div>
+		<div class="col-sm-6">
+			<div class="panel panel-default">
+		        <div class="panel-body">
+			          <p align="center">Taxa de Multas de Cada Participante no Ambiente:</p>
+			          <br>
+			          <div id="chart4"></div> 
+				</div>
+			</div>
+		</div>
+	</div>
+    </div>
+</div>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=default"></script>
+<script type="text/javascript">
+  var tarefas1 = ["Tarefas"];
+  var tarefas_com_atraso1 = ["Tarefas com atraso"];
+  var usuarios = [];
+
+  {% for e in tarefas_concluidas_e_nao %}
+    tarefas1.push({{ e.tarefas_totais }});
+    tarefas_com_atraso1.push({{ e.tarefas_com_atraso }});
+    usuarios.push('{{ e.usuario }}');
+  {% endfor %}
+
+  console.log(tarefas1);
+  console.log(tarefas_com_atraso1);
+  console.log(usuarios);
+  //console.log(meses);
+
+var chart = bb.generate({
+  "data": {
+    "columns": [
+      tarefas1,
+      tarefas_com_atraso1
+    ],
+    "type": "bar"
+  },
+  "axis": {
+    "x": {
+      "type": "category",
+      "tick": {
+        "multiline": false
+      },
+      "categories": usuarios
+    }
+  },
+  
+
+  "bindto": "#chart1"
+});
+
+var meses = [];
+
+var nomes = [];
+
+{% for b in tarefas_concluidas.nomes %}
+	nomes.push(['{{ b }}',]);
+{% endfor %}
+
+console.log(nomes);
+
+var i = 0;
+
+{% for b in tarefas_concluidas.dados %}
+	{% for q in b %}
+		nomes[i].push(parseFloat({{q}}));
+	{% endfor %}
+	i++;
+{% endfor %}
+
+console.log(nomes);
+
+{% for a in tarefas_concluidas.mes %}
+    meses.push('{{ a|date:"M/Y" }}');
+{% endfor %}
+
+console.log(meses);
+
+var chart2 = bb.generate({
+  "data": {
+    "columns": nomes,
+    "type": "bar"
+  },
+  "axis": {
+    "x": {
+      "type": "category",
+      "tick": {
+        "multiline": false
+      },
+      "categories": meses
+    },
+    "y": {
+        "min": 0
+    }
+  },
+  "grid": {
+    "y": {
+      "lines": [
+        {
+          "value": 0
+        }
+      ]
+    }
+  },
+
+  "bindto": "#chart2"
+});
+
+var chart3 = bb.generate({
+  "data": {
+    "columns": [
+      {% for c in porcentagem_de_participacao %}
+        ['{{ c.nome }}', {{ c.participacao }}],
+      {% endfor %}
+    ],
+    "type": "pie",
+    "onclick": function (d, i) { console.log("onclick", d, i); },
+    "onover": function (d, i) { console.log("onover", d, i); },
+    "onout": function (d, i) { console.log("onout", d, i); }
+  },
+  "bindto": "#chart3"
+});
+
+var chart4 = bb.generate({
+  "data": {
+    "columns": [
+      {% for c in porcentagem_de_atraso %}
+        ['{{ c.nome }}', {{ c.atrasos }}],
+      {% endfor %}
+    ],
+    "type": "pie",
+    "onclick": function (d, i) { console.log("onclick", d, i); },
+    "onover": function (d, i) { console.log("onover", d, i); },
+    "onout": function (d, i) { console.log("onout", d, i); }
+  },
+  "bindto": "#chart4"
+});
+
+
+</script>
+{% endblock conteudo %}

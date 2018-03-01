@@ -1,0 +1,244 @@
+@import url(http://fonts.googleapis.com/css?family=Lato);
+
+.bnormal{
+  color: white;
+}
+
+
+.linkbranco{
+  color: white;
+  text-decoration: underline;
+}
+
+.linkbranco:hover{
+  color: #87CEEB;
+  text-decoration: underline;
+}
+
+.linkbranco:visited{
+  color: white;
+}
+
+.aparece{
+    display: block;
+}
+
+.desaparece{
+    display: none;
+}
+
+.colorRodape{
+  background-color: #192F3D;
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.content {
+  flex: 1;
+}
+
+.brancor{
+  color: #FFFFFF;
+}
+
+.linkbranco:link{
+  color: #cccccc;
+}
+
+.titulop{
+  color: white;
+  font-size: 54px;
+}
+
+.linkbranco:hover{
+  color: #FFFFFF;
+}
+
+.linkbranco:visited{
+  color: #a6a6a6;
+}
+
+.rodleft{
+  border-right: 1px solid #FFFFFF;
+}
+
+.nav-sidebar {
+    width: 100%;
+    padding: 8px 0;
+    border-right: 1px solid #ddd;
+}
+.nav-sidebar a {
+    color: #333;
+    -webkit-transition: all 0.08s linear;
+    -moz-transition: all 0.08s linear;
+    -o-transition: all 0.08s linear;
+    transition: all 0.08s linear;
+    -webkit-border-radius: 4px 0 0 4px;
+    -moz-border-radius: 4px 0 0 4px;
+    border-radius: 4px 0 0 4px;
+}
+.nav-sidebar .active a {
+    cursor: default;
+    background-color: #428bca;
+    color: #fff;
+    text-shadow: 1px 1px 1px #666;
+}
+.nav-sidebar .active a:hover {
+    background-color: #428bca;
+}
+.nav-sidebar .text-overflow a,
+.nav-sidebar .text-overflow .media-body {
+    white-space: nowrap;
+    overflow: hidden;
+    -o-text-overflow: ellipsis;
+    text-overflow: ellipsis;
+}
+
+/* Right-aligned sidebar */
+.nav-sidebar.pull-right {
+    border-right: 0;
+    border-left: 1px solid #ddd;
+}
+.nav-sidebar.pull-right a {
+    -webkit-border-radius: 0 4px 4px 0;
+    -moz-border-radius: 0 4px 4px 0;
+    border-radius: 0 4px 4px 0;
+}
+
+.dias{
+    background-color: #AFEEEE;
+}
+
+.semanas{
+    background-color: #FFE7BA;
+}
+
+.meses{
+    background-color: #F0FFFF;
+}
+
+/*cor das tags no post do ikndex*/
+.pCinza{
+    color: #BEBEBE;
+}
+
+/*cor do nome do usuário no post do index*/
+.pCinzaUser{
+    color: #9C9C9C;
+}
+
+/*cor do link do firstname dos posts do index*/
+
+.titulopindex{
+    color: #000000;
+}
+
+
+.titulopindex:hover{
+    color: #000000;
+}
+
+.corliseg:hover{
+  text-decoration: none;
+  color: #000000;
+  transition: 500ms;
+}
+
+
+.corlisegindex{
+
+  color: #000000;
+}
+
+
+.linkSeguidores{
+  margin-bottom: -12px;
+}
+
+/* cor dos link segundo e seguidor do canto direito do index*/
+
+.corlisegindex{
+
+  color: #000000;
+}
+
+
+/** initial setup **/
+.nano {
+  position : relative;
+  width    : 100%;
+  height   : 100%;
+  overflow : hidden;
+}
+.nano > .nano-content {
+  position      : absolute;
+  overflow      : scroll;
+  overflow-x    : hidden;
+  top           : 0;
+  right         : 0;
+  bottom        : 0;
+  left          : 0;
+}
+.nano > .nano-content:focus {
+  outline: thin dotted;
+}
+.nano > .nano-content::-webkit-scrollbar {
+  display: none;
+}
+.has-scrollbar > .nano-content::-webkit-scrollbar {
+  display: block;
+}
+.nano > .nano-pane {
+  background : rgba(0,0,0,.25);
+  position   : absolute;
+  width      : 10px;
+  right      : 0;
+  top        : 0;
+  bottom     : 0;
+  visibility : hidden\9; /* Target only IE7 and IE8 with this hack */
+  opacity    : .01;
+  -webkit-transition    : .2s;
+  -moz-transition       : .2s;
+  -o-transition         : .2s;
+  transition            : .2s;
+  -moz-border-radius    : 5px;
+  -webkit-border-radius : 5px;
+  border-radius         : 5px;
+}
+.nano > .nano-pane > .nano-slider {
+  background: #444;
+  background: rgba(0,0,0,.5);
+  position              : relative;
+  margin                : 0 1px;
+  -moz-border-radius    : 3px;
+  -webkit-border-radius : 3px;
+  border-radius         : 3px;
+}
+.nano:hover > .nano-pane, .nano-pane.active, .nano-pane.flashed {
+  visibility : visible\9; /* Target only IE7 and IE8 with this hack */
+  opacity    : 0.99;
+}
+
+.nano { height: 400px; }
+.nano .nano-content { padding: 10px; }
+.nano .nano-pane   { background: #888; }
+.nano .nano-slider { background: #111; }
+
+@font-face {
+     font-family: 'Inconsolata';
+     src: url('https://fonts.googleapis.com/css?family=Inconsolata');
+;
+}
+
+.titulop{
+    font-family: 'Inconsolata', monospace;
+    font-size: 11pt;
+}

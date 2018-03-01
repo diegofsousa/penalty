@@ -1,0 +1,12 @@
+.env
+*.pyc
+__pycache__
+db.sqlite3
+proj_beat.log
+proj_worker.log
+myprojectenv
+media
+celerybeat-schedule
+django
+celerybeat.pid
+projeto

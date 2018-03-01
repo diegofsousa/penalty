@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% load aux_tags %}
+{% block titulo %}Penalty - Configurações de Notificações{% endblock titulo %}
+
+{% block conteudo %}
+
+
+<div class="container-fluid">
+{% if conclude %}
+    <div class="modal fade" id="modalSuccess" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="exampleModalLabel">Alterações salvas</h4>
+          </div>
+          <div class="modal-body">
+            <p>Olá, {{ request.user.first_name }}. Suas alterações de notificações foram salvas</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script type="text/javascript">
+      $('#modalSuccess').modal('show');
+    </script>
+  {% endif %}
+  <ol class="breadcrumb">
+  <li><a href="/">Home</a></li>
+  <li class="active">Configurações de notificações</li>
+</ol>
+	<h3>Configurações de notificações</h3>
+	<hr>
+
+  <div class="panel panel-default">
+      <div class="panel-body">
+      <p>Suas notificações são enviadas para o email <b>{{ request.user.email }}</b> (altere o email <a href="{% url 'core:settings' %}">aqui</a>).</p>
+      <hr>
+        <form action="{% url 'core:notificacoes' %}" method="post">
+          {% csrf_token %}
+
+          {% for field in form %}
+            <div class="form-group"> 
+
+          {{ field }} {{ field.label_tag }} {{ field.help_text }}
+ 
+          {{ field.errors }}
+          </div>
+          {% endfor %}
+        <button type="submit" class="btn btn-primary btn-block">Salvar alterações</button>
+      </form>
+      </div>
+</div>
+	
+
+</div>
+
+	
+{% endblock conteudo %}

@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block titulo %}Penalty - Gerenciador de tarefas domiciliares{% endblock titulo %}
+
+{% block conteudo %}
+<script src="{% static 'js/canv.js' %}"></script>
+<link rel="stylesheet" href="{% static 'css/inicio.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'img/bootstrap-social.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'img/css/font-awesome.css' %}">
+
+<header class="header-image" style="margin-top:-30px;padding-top:130px;">
+        
+   <canvas id="spiders"></canvas>
+        <div class="container-fluid" style="padding-bottom:50px;">
+            <div class="row">
+                <div class="col-sm-12">
+                   <p class="titulo">penalty.tk</p>
+                   <p class="branco">Um webapp para controle e organização de tarefas domésticas.</p>
+                   <br>
+                   
+                </div>
+                <div class="col-sm-6">
+                    <ul type="none" class="branco">
+                        <li>Crie regras;</li>
+                        <li>Organize tarefas;</li>
+                        <li>Receba notificações;</li>
+                        <li>Marque penalty!</li>
+                    </ul>
+                    <br>
+                    <p class="branco">
+                        Faça Login ou entre com:<br>
+                          <a href="{% url 'social:begin' 'facebook' %}" class="btn btn-social btn-facebook">
+                            <span class="fa fa-facebook"></span> Facebook
+                          </a>
+                          <a href="{% url 'social:begin' 'google-oauth2' %}" class="btn btn-social btn-google">
+                            <span class="fa fa-google"></span> Google
+                          </a>
+                          <a href="{% url 'social:begin' 'twitter' %}" class="btn btn-social btn-twitter">
+                            <span class="fa fa-twitter"></span> Twitter
+                          </a>
+                          <a href="{% url 'social:begin' 'github' %}" class="btn btn-social btn-github">
+                            <span class="fa fa-github"></span> Github
+                          </a>
+                    </p>
+                </div>
+                <div class="col-sm-6">
+                    <div class="loginmodal-container">
+                        Faça login no formulário abaixo.
+					   <hr>
+					    <form id='logar' method="post"> {% csrf_token %}
+						  <div class="form-group">
+						    <label for="exampleInputEmail1">Username:</label>
+						    <input type="text" class="form-control" id="aunome" placeholder="Insira seu username">
+						    <span class="help-block desaparece bnormal">Insira um nome de usuário válido.</span>
+						  </div>
+						  <div class="form-group">
+						    <label for="exampleInputPassword1">Senha:</label>
+						    <input type="password" class="form-control" id="ausenha" placeholder="Insira sua senha">
+						    <span class="help-block desaparece bnormal">Insira uma senha válida.</span>
+						  </div>
+						  <button type="submit" id="btnlogin" class="btn btn-primary btn-block">Entrar</button>
+
+						</form>
+						<br>
+						<p style="color: white;">Não tem cadastro? <a class="linkbranco" href="/cadastro/">Faça aqui</a>!<br>Esqueceu a senha? <a class="linkbranco" href="/password_reset/">Recupere aqui</a>!</p>
+                    </div>
+                </div>
+            </div>            
+        </div>
+    </header>
+
+
+    <!-- Page Content -->
+    <div class="container" id="sobre">
+
+        <hr class="featurette-divider">
+
+        <!-- First Featurette -->
+        <div class="featurette" id="about">
+            <img class="featurette-image img-circle img-responsive pull-right" src="{% static 'img/slide01.jpg' %}">
+            <h2 class="featurette-heading">Organização por
+                <span class="text-muted">ambiente</span>
+            </h2>
+            <p class="lead">O usuário pode criar ambientes referentes as casas, apartmentos, condomínio; e adicionar participantes que tem registro no penalty.tk no ambiente.</p>
+        </div>
+
+        <hr class="featurette-divider">
+
+        <!-- Second Featurette -->
+        <div class="featurette" id="services">
+            <img class="featurette-image img-circle img-responsive pull-left" src="{% static 'img/slide02.jpg' %}">
+            <h2 class="featurette-heading">Dados e estatíscas sobre sua proeficiência
+                <span class="text-muted">em tempo real</span>
+            </h2>
+            <p class="lead">A plataforma dispõe de visualizações de dados para mensurar o desempenho dos usuários a fim de melhorar a proeficiência e aumentar a organização dos ambientes.</p>
+        </div>
+
+        <hr class="featurette-divider">
+
+        <!-- Third Featurette -->
+        <div class="featurette" id="contact">
+            <img class="featurette-image img-circle img-responsive pull-right" src="{% static 'img/slide03.jpg' %}">
+            <h2 class="featurette-heading">Maior controle sobre afazeres e tarefas
+                <span class="text-muted">domésticas</span>
+            </h2>
+            <p class="lead">penalty.tk traz uma série de funcionalidades. Uma delas é que o usuário pode validar as tarefas assim que concluídas. Os outros usuários podem refutar a solicitação, concretizando multa para o responsável.</p>
+        </div>
+
+
+
+    </div>
+{% endblock conteudo %}

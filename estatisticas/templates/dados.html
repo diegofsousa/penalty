@@ -1,0 +1,199 @@
+{% extends "base.html" %}
+{% load aux_tags %}
+{% block titulo %}Penalty - Meus Dados{% endblock titulo %}
+
+{% block conteudo %}
+
+<div class="container-fluid">
+	<h3>Meus dados.</h3>
+	<hr>
+	<div class="col-sm-12">
+		<div class="panel panel-default">
+	        <div class="panel-body">
+		          <p align="center">Tarefas dos Últimos Meses:</p>
+		          <br>
+		          <div id="chart"></div>  
+		          <p align="center">O gráfico acima representa suas útimas tarefas. Cada nível representa um estado:</p>
+		          <div class="col-sm-6 col-sm-offset-3">
+		          <p align="center">
+		          	  <table class="table table-hover">
+					    <thead>
+					      <tr>
+					        <th>Nível</th>
+					        <th>Significado</th>
+					      </tr>
+					    </thead>
+					    <tbody>
+					      <tr>
+					        <td>1</td>
+					        <td>Tarefa em validação - Em no máximo dois dias esta tarefa receberá nível 4</td>
+					      </tr>
+					      <tr>
+					        <td>2</td>
+					        <td>Houve multa - Esta tarefa foi multada e paga</td>
+					      </tr>
+					      <tr>
+					        <td>3</td>
+					        <td>Multa ainda corrente - Esta tarefa foi multada e não paga</td>
+					      </tr>
+					      <tr>
+					        <td>4</td>
+					        <td>Tarefa validada - Tarefa concluída com sucesso</td>
+					      </tr>
+					    </tbody>
+					  </table>
+		          </p>
+		      </div>
+			</div>
+		</div>
+	</div>
+	<div class="col-sm-6">
+		<div class="panel panel-default">
+	        <div class="panel-body">
+		          <p align="center">Quantidade de Tarefas por Status:</p>
+		          <br>
+		          <div id="chart2"></div>  
+		          <p align="center">O gráfico acima representa a quantidade de tarefas por status.</p>
+			</div>
+		</div>
+	</div>
+	<div class="col-sm-6">
+		<div class="panel panel-default">
+	        <div class="panel-body">
+		          <p align="center">Contribuição por Ambiente:</p>
+		          <br>
+		          <div id="chart3"></div>  
+		          <p align="center">O gráfico acima mostra o percentual de suas contribuições em cada ambiente.</p>
+			</div>
+		</div>
+	</div>
+	<div class="col-sm-12">
+		<div class="panel panel-default">
+	        <div class="panel-body">
+		          <p align="center">Tarefas Agrupadas por Mes:</p>
+		          <br>
+		          <div id="chart4"></div>  
+		          <p align="center">O gráfico acima representa o acumulado mensal de dados das suas tarefas nos últimos 12 meses.</p>
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+  var eventos = ["Tarefa"];
+  var meses = [];
+  var validados = ["Tarefas Concluídas no Tempo Correto"];
+  var stat = ["Status"];
+
+  var eventos2 = ["Eventos"];
+  var meses2 = [];
+  {% for e in dado %}
+    eventos2.push({{ e.eventos }});
+    validados.push({{ e.validadas }});
+    meses2.push('{{ e.mes|date:"M/Y" }}');
+  {% endfor %}
+
+  {% for e in ultimas %}
+    eventos.push({{ e.nivel }});
+    meses.push('{{ e.dia|date:"d/M/Y" }}');
+  {% endfor %}
+
+  {% for e in status %}
+    stat.push({{ e }});
+  {% endfor %}
+
+  //console.log(geral)
+  console.log(eventos);
+  //console.log(meses);
+
+var chart = bb.generate({
+  "data": {
+    "columns": [
+      eventos
+    ],
+    "type": "area"
+  },
+  "axis": {
+    "x": {
+      "type": "category",
+      "tick": {
+        "multiline": false
+      },
+      "categories": meses
+    }
+  },
+  
+
+  "bindto": "#chart"
+});
+
+var chart2 = bb.generate({
+  "data": {
+    "columns": [
+      stat
+    ],
+    "type": "bar"
+  },
+  "axis": {
+    "x": {
+      "type": "category",
+      "tick": {
+        "multiline": false
+      },
+      "categories": ["Em Validação", "Validadas", "Multadas", "Com multa corrente"]
+    }
+  },
+  
+
+  "bindto": "#chart2"
+});
+
+var chart3 = bb.generate({
+  "data": {
+    "columns": [
+      {% for c in contribuicoes %}
+        ['{{ c.nome }}', {{ c.contribuicao }}],
+      {% endfor %}
+    ],
+    "type": "pie",
+    "onclick": function (d, i) { console.log("onclick", d, i); },
+    "onover": function (d, i) { console.log("onover", d, i); },
+    "onout": function (d, i) { console.log("onout", d, i); }
+  },
+  "bindto": "#chart3"
+});
+
+var chart4 = bb.generate({
+  "data": {
+    "columns": [
+      eventos2,
+      validados
+    ],
+  },
+  "axis": {
+    "x": {
+      "type": "category",
+      "tick": {
+        "multiline": false
+      },
+      "categories": meses2
+    },
+    "y": {
+        "min": 0
+    }
+  },
+  "grid": {
+    "y": {
+      "lines": [
+        {
+          "value": 0
+        }
+      ]
+    }
+  },
+
+  "bindto": "#chart4"
+});
+
+</script>
+	
+{% endblock conteudo %}

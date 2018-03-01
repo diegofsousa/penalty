@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% load aux_tags %}
+{% block titulo %}Penalty - {{ ambiente.nome }} - Eventos{% endblock titulo %}
+
+{% block conteudo %}
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-sm-3">
+		    <nav class="nav-sidebar">
+		        <ul class="nav">
+		            <li><a href="{% url 'ambiente:ambiente' ambiente.pk %}">Geral</a></li>
+		            <li class="nav-divider"></li>
+		            <li><a href="{% url 'ambiente:proximos_eventos' ambiente.pk %}">Próximos eventos</a></li>
+		            <li><a href="{% url 'ambiente:eventos_passados' ambiente.pk %}">Eventos passados</a></li>
+		            <li><a href="{% url 'ambiente:eventos_multados' ambiente.pk %}">Multas</a></li>
+		            <li class="nav-divider"></li>
+		            <li class="active"><a href="{% url 'ambiente:eventos' ambiente.pk %}">Gerenciar eventos</a></li>
+		            <li><a href="{% url 'ambiente:participantes' ambiente.pk %}">Gerenciar participantes</a></li>
+		            <li class="nav-divider"></li>
+		            <li><a href="{% url 'ambiente:estatisticas' ambiente.pk %}">Estatísticas</a></li>
+		            <li><a href="{% url 'ambiente:sobre' ambiente.pk %}">Sobre o ambiente</a></li>
+		        </ul>
+		    </nav>
+		</div>
+	
+	<div class="col-sm-9">
+		<ol class="breadcrumb">
+		  <li><a href="#">Home</a></li>
+		  <li><a href="{% url 'ambiente:ambiente' ambiente.pk %}">{{ ambiente.nome }}</a></li>
+		  <li><a href="{% url 'ambiente:eventos' ambiente.pk %}">Eventos</a></li>
+		  <li class="active">Criar evento</li>
+		</ol>
+		<h3>{{ ambiente.nome }} - Gerenciar eventos:</h3>
+		<hr>
+		<div class="panel panel-default">
+		  <div class="panel-body">
+		  <p>Edite o evento</p>
+		  <hr>
+		    <form action="{% url 'ambiente:novoevento' ambiente.pk %}" method="post">
+		      {% csrf_token %}
+		      {% for field in form %}
+		      	<div class="form-group">		      	
+    			{{ field.label_tag }} {{ field }}
+    			{{ field.errors }}
+    			{{ field.error_messages }}
+    			</div>
+		      {% endfor %}
+			  <button type="submit" class="btn btn-primary btn-block">Criar</button>
+			</form>
+		  </div>
+		   </div>
+		  </div>
+	  </div>
+	</div>
+</div>
+
+{{ form.media }}
+
+	
+{% endblock conteudo %}

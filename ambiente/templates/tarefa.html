@@ -1,0 +1,255 @@
+{% extends "base.html" %}
+{% load aux_tags %}
+{% load staticfiles %}
+{% block titulo %}{{ tarefa.nome }} ({{ tarefa.dia_evento|date:"d/M/Y" }}) de {{ ambiente.nome }} - Penalty{% endblock titulo %}
+
+{% block conteudo %}
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-sm-3">
+		    <nav class="nav-sidebar">
+		        <ul class="nav">
+		            <li><a href="{% url 'ambiente:ambiente' ambiente.pk %}">Geral</a></li>
+		            <li class="nav-divider"></li>
+		            <li><a href="{% url 'ambiente:proximos_eventos' ambiente.pk %}">Próximos eventos</a></li>
+		            <li><a href="{% url 'ambiente:eventos_passados' ambiente.pk %}">Eventos passados</a></li>
+		            <li><a href="{% url 'ambiente:eventos_multados' ambiente.pk %}">Multas</a></li>
+		            <li class="nav-divider"></li>
+		            <li class="active"><a href="{% url 'ambiente:eventos' ambiente.pk %}">Gerenciar eventos</a></li>
+		            <li><a href="{% url 'ambiente:participantes' ambiente.pk %}">Gerenciar participantes</a></li>
+		            <li class="nav-divider"></li>
+		            <li><a href="{% url 'ambiente:estatisticas' ambiente.pk %}">Estatísticas</a></li>
+		            <li><a href="{% url 'ambiente:sobre' ambiente.pk %}">Sobre o ambiente</a></li>
+		        </ul>
+		    </nav>
+		</div>
+	
+	<div class="col-sm-9">
+		<ol class="breadcrumb">
+		  <li><a href="#">Home</a></li>
+		  <li><a href="{% url 'ambiente:ambiente' ambiente.pk %}">{{ ambiente.nome }}</a></li>
+		  <li><a href="{% url 'ambiente:eventos' ambiente.pk %}">Eventos</a></li>
+		  <li><a href="{% url 'ambiente:evento' ambiente.pk tarefa.id_agrupador %}">{{ tarefa.nome }}</a></li>
+		  <li class="active">{{ tarefa.dia_evento|date:"d/M/Y" }}</li>
+		</ol>
+		<h3>{{ tarefa.nome }} - {{ tarefa.dia_evento|date:"d/M/Y" }} {% if tarefa.dia_evento|verdata == 1 %}(Hoje){% elif tarefa.dia_evento|verdata == 0 %}(Tarefa passada){% endif %}:</h3>
+		<hr>
+		<div class="panel panel-default">
+		  {% if tarefa.intervalo == "D" %}
+	  	  	<div class="panel-body dias">
+	  	  {% elif tarefa.intervalo == "S" %}
+	  	  	<div class="panel-body semanas">
+	  	  {% else %}
+	  	    <div class="panel-body meses">
+	  	  {% endif %}
+		  <h4>Detalhes do evento:</h4>
+		  <hr>
+		  	<ul>
+		  		<li><b>Descrição:</b> {{ tarefa.descricao }}</li>
+		  		<li><b>Tarefa atribuída para:</b> {{ tarefa.responsavel.first_name }}</li>
+		  		<li><b>Valor da multa:</b> R$ {{ tarefa.valor_multa }}</li><br>
+		  	</ul>
+		  	<br>
+		  	<h4>Ações para esta tarefa:</h4>
+		  	<hr>
+		  	{% if regras == False %}
+		  		<p>Esta é uma tarefa futura, acalme-se!</p>
+		  	{% else %}
+			  	{% if request.user == tarefa.responsavel %}
+			  		{% if regras == 1 %}
+			  			<p>Você já solicitou a validação desta tarefa em <b>{{ tarefa.momento_da_solicitacao }}</b>.
+			  				<button data-toggle="modal" data-target="#modalDes" type="button" class="btn btn-default">Desfazer solicitação</button>
+			  			</p>
+			  			<div class="modal fade" id="modalDes" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+							  <div class="modal-dialog" role="document">
+							    <div class="modal-content">
+							      <div class="modal-header">
+							        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+							        <h4 class="modal-title" id="exampleModalLabel">Desfazer solicitação de validação</h4>
+							      </div>
+							      <div class="modal-body">
+							      	<p>Esta ação pode acarretar em:</p>
+							      	<ul>
+							      		<li>Multa, caso a data da tarefa já tenha ocorrido;</li>
+							      	</ul>
+							      </div>
+							      <div class="modal-footer">
+							        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+							        <a href="{% url 'ambiente:cancelar_validacao' ambiente.pk tarefa.pk %}" class="btn btn-danger">Confirmar</a>
+							      </div>
+							    </div>
+							  </div>
+							</div>
+				  		<ul>
+				  			{% if multa > 0 %}
+				  				<li style="color: red;">Houve multa de R$ {{ multa }} nesta tarefa;</li>
+				  			{% endif %}
+				  			<li>Solicitação em processo de validação;</li>
+				  			<li>Caso algum dos outros participantes ache que você esteja mentindo, eles poderão lhe refutar em dois dias após a sua solicitação.</li>
+				  		</ul>
+			  		{% elif regras == 2 %}
+			  			<p>Você solicitou a validação desta tarefa em {{ tarefa.momento_da_solicitacao }}</p>
+				  		<ul>
+				  			{% if multa > 0 %}
+				  				<li style="color: red;">Houve multa de R$ {{ multa }} nesta tarefa;</li>
+				  			{% endif %}
+				  			<li>Sua tarefa foi validada com sucesso!</li>
+				  		</ul>
+				  	{% elif regras == 3 %}
+			  			<p>Você tem até meia noite para cumprir com esta tarefa! <span>
+			  				<button data-toggle="modal" data-target="#modalS" type="button" class="btn btn-success">Solicitar validação</button>
+			  				<div class="modal fade" id="modalS" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+							  <div class="modal-dialog" role="document">
+							    <div class="modal-content">
+							      <div class="modal-header">
+							        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+							        <h4 class="modal-title" id="exampleModalLabel">Confirmar solicitação de validação</h4>
+							      </div>
+							      <div class="modal-body">
+							      	<p>Você realmente concluiu com sua tarefa?</p>
+							      	<ul>
+							      		<li>Caso esteja mentindo, os outros participantes podem refutar sua validação;</li>
+							      		<li>Confirmando você evita o acúmulo de multas para esta tarefa.</li>
+							      	</ul>
+							      </div>
+							      <div class="modal-footer">
+							        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+							        <a href="{% url 'ambiente:solicitacao_validacao' ambiente.pk tarefa.pk %}" class="btn btn-success">Confirmar</a>
+							      </div>
+							    </div>
+							  </div>
+							</div>
+			  			</span></p>
+				  		<ul>
+				  			<li>Fuja da multa!</li>
+				  		</ul>
+				  	{% elif regras == 4 %}
+			  			<p style="color: red;">Você está sendo multado em <b>R$ {{ multa }}</b> nesta tarefa!<span>
+			  				<button data-toggle="modal" data-target="#modalS" type="button" class="btn btn-success">Solicitar validação</button>
+
+			  				<div class="modal fade" id="modalS" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+							  <div class="modal-dialog" role="document">
+							    <div class="modal-content">
+							      <div class="modal-header">
+							        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+							        <h4 class="modal-title" id="exampleModalLabel">Confirmar solicitação de validação</h4>
+							      </div>
+							      <div class="modal-body">
+							      	<p>Você realmente concluiu com sua tarefa?</p>
+							      	<ul>
+							      		<li>Caso esteja mentindo, os outros participantes podem refutar sua validação;</li>
+							      		<li>Confirmando você evita o acúmulo de multas para esta tarefa.</li>
+							      	</ul>
+							      </div>
+							      <div class="modal-footer">
+							        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+							        <a href="{% url 'ambiente:solicitacao_validacao' ambiente.pk tarefa.pk %}" class="btn btn-success">Confirmar</a>
+							      </div>
+							    </div>
+							  </div>
+							</div>
+			  			</span></p>
+			  			<ul>
+			  				<li>Interrompa sua multa solicitando a validação</li>
+			  			</ul>
+				  		
+			  		{% endif %}			  		
+			  	{% else %}
+			  		{% if regras == 1 %}
+			  			<p>{{ tarefa.responsavel.first_name }} solicitou a validação desta tarefa em <b>{{ tarefa.momento_da_solicitacao }}</b>.<span>
+			  				<button data-toggle="modal" data-target="#modalS" type="button" class="btn btn-danger">Refutar validação</button>
+
+			  				<div class="modal fade" id="modalS" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+							  <div class="modal-dialog" role="document">
+							    <div class="modal-content">
+							      <div class="modal-header">
+							        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+							        <h4 class="modal-title" id="exampleModalLabel">Refutar de validação</h4>
+							      </div>
+							      <div class="modal-body">
+							      	<p>Tem certeza que o participante <b>{{ tarefa.responsavel.first_name }}</b> não cumpriu com este afazer?</p>
+							      	<ul>
+							      		<li>Observe bem, pois a confirmação desta ação poderá resultar em multa para responsável.</ll>
+							      	</ul>
+							      </div>
+							      <div class="modal-footer">
+							        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+							        <a href="{% url 'ambiente:refutacao_validacao' ambiente.pk tarefa.pk %}" class="btn btn-danger">Confirmar</a>
+							      </div>
+							    </div>
+							  </div>
+							</div>
+			  			</span></p>
+				  		<ul>
+				  			{% if multa > 0 %}
+				  				<li style="color: red;">Houve multa de R$ {{ multa }} nesta tarefa;</li>
+				  			{% endif %}
+				  			<li>Solicitação em processo de validação;</li>
+				  			<li>Caso ele não tenha cumprido com seu afazer, <b>refute-o</b>.</li>
+				  		</ul>
+			  		{% elif regras == 2 %}
+			  			<p>{{ tarefa.responsavel.first_name }} solicitou a validação desta tarefa em <b>{{ tarefa.momento_da_solicitacao }}</b>.</p>
+				  		<ul>
+				  			{% if multa > 0 %}
+				  				<li style="color: red;">Houve multa de R$ {{ multa }} nesta tarefa;</li>
+				  			{% endif %}
+				  			<li>A tarefa foi validada com sucesso!</li>
+				  		</ul>
+				  	{% elif regras == 3 %}
+			  			<p>{{ tarefa.responsavel.first_name }} tem até meia noite para cumprir com esta tarefa</p>
+			  			<ul>
+			  				<li>Caso o responsável não solicite a validação, a multa irá correr.</li>
+			  			</ul>
+				  	{% elif regras == 4 %}
+			  			<p style="color: red;">{{ tarefa.responsavel.first_name }} está sendo multado em <b>R$ {{ multa }}</b> nesta tarefa!</p>
+			  			<ul>
+			  				<li>Enquanto o resposável não solicitar a validação, as multas estarão correndo diariamente;</li>
+			  				<li>A multa nesta tarefa é R$ {{ tarefa.valor_multa }} por dia.</li>
+			  			</ul>
+			  		{% endif %}
+			  	{% endif %}
+		  	{% endif %}		  	
+		  	<hr>
+		  	<h4>Comentários:</h4>
+		  	<div class="col-xs-12">							
+				{% for com in coments %}
+					<div class="panel panel-default">
+						<div class="panel-body">
+							<div class="media-body">
+							    <h4 class="media-heading">{{ com.usuario.first_name }}</h4>
+							    <small class="pCinza"><span class="glyphicon glyphicon-time"></span> 
+							    	
+							  			Publicado em {{ com.data }}
+							  		
+							    </small>
+
+							    <div class="fcc">{{ com.texto|safe}}<br>
+							    	{% if com.usuario == request.user %}
+							    		<button type="button" class="btn btn-xs btn-link" onclick="remove_comment('{{ com.pk }}')">Excluir comentário</button>
+							    	{% endif %}							    	
+							    </div>
+							</div>
+						</div>
+					</div>
+				{% empty %}
+				<p>Ainda não há nenhum comentário</p>
+				{% endfor %}
+				<div id="post"></div>
+					<h4>Comente esta tarefa:</h4>
+					<form method="post">
+						{% csrf_token %}
+							{{ form.texto }}
+						<button class="btn btn-success col-xs-4 col-xs-offset-3" type="submit">Responder</button>
+					</form>
+				    	
+				</div>
+		  </div>
+		   </div>
+		  </div>
+	  </div>
+	</div>
+</div>
+	
+<script type="text/javascript" src="{% static 'ckeditor/ckeditor/ckeditor.js' %}"></script>
+    <script type="text/javascript" src="{% static 'ckeditor/ckeditor-init.js' %}"></script>
+{% endblock conteudo %}

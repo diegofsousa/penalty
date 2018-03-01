@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block titulo %}Penalty - Registrar-se{% endblock titulo %}
+
+{% block conteudo %}
+<script src="{% static 'js/canv.js' %}"></script>
+<link rel="stylesheet" href="{% static 'css/inicio.css' %}">
+<header class="header-image" style="margin-top:-30px;padding-top:130px;">
+        
+   <canvas id="spiders"></canvas>
+
+<div class="container" style="padding-bottom:50px;">
+    <div class="col-md-6 col-md-offset-3">
+        <div class="loginmodal-container">
+        <h4>Faça seu registro na plataforma.</h4>
+         <hr>
+        <form id="register">
+        <div class="form-group">Nome:</label>
+            <input type="text" class="form-control" id="nomer" placeholder="Insira seu nome" required>
+          </div>
+          <div class="form-group">
+            <label for="exampleInputEmail1">Username:</label>
+            <input type="text" class="form-control" id="userr" placeholder="Insira seu username" required>
+          </div>
+          <div class="form-group">
+            <label for="exampleInputEmail1">Email:</label>
+            <input type="text" class="form-control" id="emailr" placeholder="Insira seu email">
+          </div>
+          <hr>
+          <div class="form-group">
+            <label for="exampleInputPassword1">Senha:</label>
+            <input type="password" class="form-control" id="passwordr" placeholder="Insira sua senha">
+          </div>
+          <div class="form-group">
+            <label for="exampleInputPassword1">Repita a senha:</label>
+            <input type="password" class="form-control" id="repasswordr" placeholder="Insira sua novamente sua senha">
+          </div>
+          <button type="submit" id="btnregister" class="btn btn-primary btn-block">Registrar-se!</button>
+        </form>
+    </div>
+    </div>
+</div>
+</header>
+{% endblock conteudo %}

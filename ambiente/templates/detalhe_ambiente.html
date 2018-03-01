@@ -1,0 +1,228 @@
+{% extends "base.html" %}
+{% load aux_tags %}
+{% block titulo %}Penalty - {{ ambiente.nome }} {% endblock titulo %}
+
+{% block conteudo %}
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-sm-3">
+		    <nav class="nav-sidebar">
+		        <ul class="nav">
+		            <li class="active"><a href="{% url 'ambiente:ambiente' ambiente.pk %}">Geral</a></li>
+		            <li class="nav-divider"></li>
+		            <li><a href="{% url 'ambiente:proximos_eventos' ambiente.pk %}">Próximos eventos</a></li>
+		            <li><a href="{% url 'ambiente:eventos_passados' ambiente.pk %}">Eventos passados</a></li>
+		            <li><a href="{% url 'ambiente:eventos_multados' ambiente.pk %}">Multas</a></li>
+		            <li class="nav-divider"></li>
+		            <li><a href="{% url 'ambiente:eventos' ambiente.pk %}">Gerenciar eventos</a></li>
+		            <li><a href="{% url 'ambiente:participantes' ambiente.pk %}">Gerenciar participantes</a></li>
+		            <li class="nav-divider"></li>
+		            <li><a href="{% url 'ambiente:estatisticas' ambiente.pk %}">Estatísticas</a></li>
+		            <li><a href="{% url 'ambiente:sobre' ambiente.pk %}">Sobre o ambiente</a></li>
+		        </ul>
+		    </nav>
+		</div>
+	
+	<div class="col-sm-9">
+	<h3>{{ ambiente.nome }}</h3>
+	<hr>
+	</div>
+	<div class="col-sm-5">
+		<div class="panel panel-default">
+		  <div class="panel-body">
+		  	<p>Hoje é dia de...</p>
+		  	<hr>
+		  	{% for evento in tarefas_hj %}	  		
+		  	
+		  	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-4">
+			  	<div class="panel panel-default">
+			  	  {% if evento.intervalo == "D" %}
+			  	  	<div class="panel-body dias">
+			  	  {% elif evento.intervalo == "S" %}
+			  	  	<div class="panel-body semanas">
+			  	  {% else %}
+			  	    <div class="panel-body meses">
+			  	  {% endif %}
+			  	  <small class="pCinzaUser">
+				    <a href="{% url 'ambiente:tarefa' ambiente.pk evento.pk %}" class="titulopindex">{{ evento.nome|truncatechars:16 }}</a><span class="pCinza"></span>
+				    <br>
+			    	{{ evento.responsavel.first_name|truncatechars:16 }}<br>
+			    	R$ {{ evento.valor_multa }}<br>
+			    	{% if evento.solicitacao_de_validacao %}
+			    		<p style="color: #008B45;">Em validação</p>
+			    	{% else %}
+			    		<p style="color: #FF6347;">Não concluída</p>
+			    	{% endif %}
+			      </small>
+
+				  </div>
+				</div>
+			  </div>
+			{% empty %}
+	  			<p>Não há tarefas para hoje! :)</p>
+		  	{% endfor %}
+		  	{% if resto_tarefas %}
+		  		<div class="col-xs-12 col-sm-12 col-md-12 col-lg-4">
+				  	<div class="panel panel-default">
+				  	  <div class="panel-body">
+
+				  	  	<a href="#" data-toggle="modal" data-target="#modalS"><h4 style="text-align: center;">+{{ resto_tarefas }} Tarefas(s)</h4></a>
+
+			  				<div class="modal fade" id="modalS" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+							  <div class="modal-dialog" role="document">
+							    <div class="modal-content">
+							      <div class="modal-header">
+							        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+							        <h4 class="modal-title" id="exampleModalLabel">Tarefas para o dia de hoje:</h4>
+							      </div>
+							      <div class="modal-body">
+							      	<div class="row">
+							      	{% for evento in tarefas_hj_total %}
+								  	  <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+									  	<div class="panel panel-default">
+									  	  {% if evento.intervalo == "D" %}
+									  	  	<div class="panel-body dias">
+									  	  {% elif evento.intervalo == "S" %}
+									  	  	<div class="panel-body semanas">
+									  	  {% else %}
+									  	    <div class="panel-body meses">
+									  	  {% endif %}
+									  	  <small class="pCinzaUser">
+										    <a href="{% url 'ambiente:tarefa' ambiente.pk evento.pk %}" class="titulopindex">{{ evento.nome }}</a><span class="pCinza"></span>
+										    <br>
+									    	{{ evento.responsavel.first_name }}<br>
+									    	R$ {{ evento.valor_multa }}<br>
+									    	{% if evento.solicitacao_de_validacao %}
+									    		<p style="color: #008B45;">Concluído</p>
+									    	{% else %}
+									    		<p style="color: #FF6347;">Não concluída</p>
+									    	{% endif %}
+									    	</small>
+
+										  </div>
+										</div>
+									  </div>
+									{% empty %}
+								  		
+								  	{% endfor %}
+								  	</div>
+							      </div>
+							    </div>
+							  </div>
+							</div>
+					  </div>
+					</div>
+				  </div>
+
+
+		  	{% endif %}
+		  </div>
+		</div>
+		<div class="panel panel-default">
+		  <div class="panel-body">
+		  	<p>Multas em aberto</p>
+		  	<hr>
+		  	{% for evento in multas %}	  		
+		  	
+		  	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-4">
+			  	<div class="panel panel-default">
+			  	  {% if evento.intervalo == "D" %}
+			  	  	<div class="panel-body dias">
+			  	  {% elif evento.intervalo == "S" %}
+			  	  	<div class="panel-body semanas">
+			  	  {% else %}
+			  	    <div class="panel-body meses">
+			  	  {% endif %}
+			  	  <small class="pCinzaUser">
+				    <a href="{% url 'ambiente:tarefa' ambiente.pk evento.pk %}" class="titulopindex">{{ evento.nome|truncatechars:16 }}</a><span class="pCinza"></span>
+				    <br>
+			    	{{ evento.responsavel.first_name|truncatechars:16 }}<br>
+			    	R$ {{ evento.valor_multa }}<br>
+			    	{% if evento.solicitacao_de_validacao %}
+			    		<p style="color: #008B45;">Concluído</p>
+			    	{% else %}
+			    		<p style="color: #FF6347;">Não concluída</p>
+			    	{% endif %}
+			      </small>
+
+				  </div>
+				</div>
+			  </div>
+			{% empty %}
+	  			<p>Não há multas nesse ambiente! :)</p>
+		  	{% endfor %}
+		  	{% if resto_multas %}
+	  		<div class="col-xs-12 col-sm-12 col-md-12 col-lg-4">
+			  	<div class="panel panel-default">
+			  	  <div class="panel-body">
+
+			  	  	<a href="{% url 'ambiente:eventos_multados' ambiente.pk %}"><h4 style="text-align: center;">+{{ resto_multas }} Multa(s)</h4></a>
+				  </div>
+				</div>
+			  </div>
+		  	{% endif %}
+		  </div>
+		</div>
+	</div>
+	<div class="col-sm-4">
+		<div class="panel panel-default">
+		  <div class="panel-body">
+		  	<p>Próximos eventos</p>
+		  	<hr>
+		  	<div class="nano">
+				<div class="nano-content">
+				  	{% for evento in tarefas_proximas %}
+					  <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+					  	<div class="panel panel-default">
+					  	  {% if evento.intervalo == "D" %}
+					  	  	<div class="panel-body dias">
+					  	  {% elif evento.intervalo == "S" %}
+					  	  	<div class="panel-body semanas">
+					  	  {% else %}
+					  	    <div class="panel-body meses">
+					  	  {% endif %}
+					  	  	<small class="pCinzaUser">
+						    	<a href="{% url 'ambiente:tarefa' ambiente.pk evento.pk %}" class="titulopindex">{{ evento.nome }}</a><span class="pCinza"> - {{ evento.dia_evento }}</span>
+							</small>
+						    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+						    	<small class="pCinzaUser">
+							    	{{ evento.responsavel.first_name }}<br>
+							    	Valor multa: R$ {{ evento.valor_multa }}<br>
+						    	</small>
+						    </div>
+						    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+						    	<small class="pCinzaUser">			    	
+						    	{% if evento|coment %}
+						    		<ul>
+						    			<li><a href="{% url 'ambiente:tarefa' ambiente.pk evento.pk %}">{{ evento|coment }} comentario(s).</a></li>
+						    		</ul>
+						    	{% endif %}
+						    </small>
+						    </div>
+						    
+						  </div>
+						</div>
+					  </div>
+
+				  {% empty %}
+				  	<div class="container">
+				  		<p>Não há nenhuma tarefa futura neste ambiente.</p>
+				  	</div>
+				  {% endfor %}
+				  {% if tarefas_proximas %}
+				  	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+			  		<div class="panel panel-default">
+				  	  <div class="panel-body">
+				  	  	<a href="{% url 'ambiente:proximos_eventos' ambiente.pk %}"><h4 style="text-align: center;">Ver todos</h4></a>
+					  </div>
+					</div>
+				  </div>
+				  {% endif %}
+				</div>
+			</div>
+		  </div>
+		</div>
+	</div>	
+	</div>
+</div>
+{% endblock conteudo %}

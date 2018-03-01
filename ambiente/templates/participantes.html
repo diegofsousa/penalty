@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block titulo %}Penalty - {{ ambiente.nome }} - Participantes{% endblock titulo %}
+
+{% block conteudo %}
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-sm-3">
+		    <nav class="nav-sidebar">
+		        <ul class="nav">
+		            <li><a href="{% url 'ambiente:ambiente' ambiente.pk %}">Geral</a></li>
+		            <li class="nav-divider"></li>
+		            <li><a href="{% url 'ambiente:proximos_eventos' ambiente.pk %}">Próximos eventos</a></li>
+		            <li><a href="{% url 'ambiente:eventos_passados' ambiente.pk %}">Eventos passados</a></li>
+		            <li><a href="{% url 'ambiente:eventos_multados' ambiente.pk %}">Multas</a></li>
+		            <li class="nav-divider"></li>
+		            <li><a href="{% url 'ambiente:eventos' ambiente.pk %}">Gerenciar eventos</a></li>
+		            <li class="active"><a href="{% url 'ambiente:participantes' ambiente.pk %}">Gerenciar participantes</a></li>
+		            <li class="nav-divider"></li>
+		            <li><a href="{% url 'ambiente:estatisticas' ambiente.pk %}">Estatísticas</a></li>
+		            <li><a href="{% url 'ambiente:sobre' ambiente.pk %}">Sobre o ambiente</a></li>
+		        </ul>
+		    </nav>
+		</div>
+	
+	<div class="col-sm-9">
+		<ol class="breadcrumb">
+		  <li><a href="#">Home</a></li>
+		  <li><a href="{% url 'ambiente:ambiente' ambiente.pk %}">{{ ambiente.nome }}</a></li>
+		  <li class="active">Participantes</li>
+		</ol>
+		<h3>{{ ambiente.nome }} - Gerenciar participantes:</h3>
+		<hr>
+		<div class="panel panel-default">
+		  <div class="panel-body">
+		  <p>Aqui estão os participantes deste ambiente</p>
+		  <hr>
+		  {% for participante in  participantes%}
+		  	<a href="#" data-toggle="modal" data-target="#modaldetalhe{{ participante.pk }}">{{ participante.first_name }}</a><span> - {{ participante.email }} {% if participante == ambiente.criador %} (Administrador do ambiente){% endif %} {% if request.user == ambiente.criador and request.user != participante %} - <a href="#" data-toggle="modal" data-target="#modal{{ participante.pk }}">Retirar participante</a>{% endif %}</span><br>
+			<div class="modal fade" id="modal{{ participante.pk }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+			  <div class="modal-dialog" role="document">
+			    <div class="modal-content">
+			      <div class="modal-header">
+			        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			        <h4 class="modal-title" id="exampleModalLabel">Confirmar exclusão de participação de {{ participante.first_name }}</h4>
+			      </div>
+			      <div class="modal-body">
+			      	<p>Ao confirmar esta ação, além de retirar {{ participante.first_name }} deste ambiente, você excuirá todos os eventos relativos ao participante. Deseja continuar?</p>
+			      </div>
+			      <div class="modal-footer">
+			        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+			        <button type="button" onclick="remove_user({{ participante.id }}, {{ ambiente.pk }});" class="btn btn-danger" onclick="excluiConta()">Excluir {{ participante.first_name }} do ambiente</button>
+			      </div>
+			    </div>
+			  </div>
+			</div>
+			<div class="modal fade" id="modaldetalhe{{ participante.pk }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+			  <div class="modal-dialog" role="document">
+			    <div class="modal-content">
+			      <div class="modal-header">
+			        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			        <h4 class="modal-title" id="exampleModalLabel">Detalhes de {{ participante.first_name }}</h4>
+			      </div>
+			      <div class="modal-body">
+			      	<ul>
+			      		<li>Nome: {{ participante.first_name }}</li>
+			      		<li>Email: {{ participante.email }}</li>
+			      		<li>Última vez que efetuou login: {{ participante.last_login }}</li>
+			      		<li>Data de cadastro: {{ participante.date_joined }}</li>
+			      	</ul>
+			      </div>
+			      <div class="modal-footer">
+			        <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+			      </div>
+			    </div>
+			  </div>
+			</div>
+		  {% endfor %}
+		  
+		  {% if request.user == ambiente.criador and request.user != participante %}
+		  <hr>
+		  <p>Para adicionar um participante ao ambiente clique <a data-toggle="modal" data-target="#exampleModal" href="#">aqui</a>.</p>
+		  <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+		  <div class="modal-dialog" role="document">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		        <h4 class="modal-title" id="exampleModalLabel">Adicionar participante ao ambiente</h4>
+		      </div>
+		      <div class="modal-body">
+		      	<p>Insira abaixo o <i>username</i> do novo participante cadastrado:</p>
+		          <div class="form-group">
+		            <label for="recipient-name" class="control-label">Username:</label>
+		            <input type="text" class="form-control" id="recipientemail" placeholder="fulano20">
+		          </div>
+		      </div>
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+		        <button type="button" class="btn btn-primary" onclick="add_user(recipientemail.value, {{ ambiente.pk }})">Adicionar</button>
+		      </div>
+		    </div>
+		  </div>
+		</div>
+		{% endif %}
+		  </div>
+		</div>
+	</div>
+</div>
+</div>
+{% endblock conteudo %}
