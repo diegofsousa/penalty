@@ -6,7 +6,7 @@ certifi==2017.11.5
 chardet==3.0.4
 decorator==4.1.2
 defusedxml==0.5.0
-Django==1.11.4
+Django==1.11.29
 git+https://github.com/diegofsousa/django-bootstrap3-datetimepicker@diegofsousa-fix-error
 git+https://github.com/diegofsousa/django-ckeditor@upload-rules
 django-extensions==1.9.0
